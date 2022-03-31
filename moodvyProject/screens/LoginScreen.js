@@ -1,4 +1,5 @@
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { auth } from '../firebase'
 import { useNavigation } from '@react-navigation/core'
@@ -19,16 +20,6 @@ const LoginScreen = () => {
         return unsubscribe
       }, [])
 
-    const handleSignUp = () => {
-        auth
-        .createUserWithEmailAndPassword(email, password)
-        .then(userCredentials => {
-            const user = userCredentials.user;
-            console.log("Registered in with:", user.email);
-        })
-        .catch(error => alert(error.message))
-    }
-
     const handleLogin = () => {
         auth
         .signInWithEmailAndPassword(email, password)
@@ -42,35 +33,37 @@ const LoginScreen = () => {
     return (
         <KeyboardAvoidingView
             style={styles.container}
-            behavior="padding"
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View style={styles.inputContainer}>
-                <TextInput
-                    placeholder="Email"
-                    value={ email }
-                    onChangeText={text => setEmail(text)}
-                    style={styles.input}
-                />
-                <TextInput
-                    placeholder="Password"
-                    value={ password }
-                    onChangeText={text => setPassword(text)}
-                    style={styles.input}
-                    secureTextEntry
-                />
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    onPress={handleLogin}
-                    style={styles.button}
-                >
-                    <Text style={styles.buttonText}>Login</Text>
+            <View style={styles.container}>
+                <Image style={styles.image} source={require("../assets/log2.png")} />
+            
+                <StatusBar style="auto" />
+                <View style={styles.inputView}>
+                    <TextInput
+                    style={styles.TextInput}
+                    placeholder="Email."
+                    placeholderTextColor="#003f5c"
+                    onChangeText={(email) => setEmail(email)}
+                    />
+                </View>
+            
+                <View style={styles.inputView}>
+                    <TextInput
+                    style={styles.TextInput}
+                    placeholder="Password."
+                    placeholderTextColor="#003f5c"
+                    secureTextEntry={true}
+                    onChangeText={(password) => setPassword(password)}
+                    />
+                </View>
+            
+                <TouchableOpacity>
+                    <Text style={styles.forgot_button}>Forgot Password?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={handleSignUp}
-                    style={[styles.button, styles.buttonOutline]}
-                >
-                    <Text style={styles.buttonOutlineText}>Register</Text>
+            
+                <TouchableOpacity style={styles.loginBtn}>
+                    <Text style={styles.loginText}>LOGIN</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -85,43 +78,40 @@ const LoginScreen = () => {
             justifyContent: 'center',
             alignItems: 'center',
         },
-        inputContainer: {
-            width: '80%'
+        image: {
+            marginBottom: 40,
+            height: 80,
+            width: 80,
         },
-        input: {
-            backgroundColor: 'white',
-            paddingHorizontal: 15,
-            paddingVertical: 10,
-            borderRadius: 10,
-            marginTop: 5,
+         
+        inputView: {
+            backgroundColor: "#FFC0CB",
+            borderRadius: 30,
+            width: "70%",
+            height: 45,
+            marginBottom: 20,
+            alignItems: "center",
         },
-        buttonContainer: {
-            width: '60%',
-            justifyContent: 'center',
-            alignItems: 'center',
+        
+        TextInput: {
+            height: 50,
+            flex: 1,
+            padding: 10,
+            marginLeft: 20,
+        },
+        
+        forgot_button: {
+            height: 30,
+            marginBottom: 30,
+        },
+        
+        loginBtn: {
+            width: "80%",
+            borderRadius: 25,
+            height: 50,
+            alignItems: "center",
+            justifyContent: "center",
             marginTop: 40,
+            backgroundColor: "#FF1493",
         },
-        button: {
-            backgroundColor: '#0782F9',
-            width: '100%',
-            paddingHorizontal: 15,
-            borderRadius: 10,
-            alignItems: 'center',
-        },
-        buttonOutline: {
-            backgroundColor: 'white',
-            marginTop: 5,
-            borderColor: '#0782F9',
-            borderWidth: 2,
-        },
-        buttonText: {
-            color: 'white',
-            fontWeight: '700',
-            fontSize: 16,
-        },
-        buttonOutlineText: {
-            color: '#0782F9',
-            fontWeight: '700',
-            fontSize: 16,
-        }
 })
