@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { auth } from '../firebase'
 import { useNavigation } from '@react-navigation/core'
+
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('')
@@ -28,6 +29,38 @@ const LoginScreen = () => {
             console.log("Logged in with:", user.email);
         })
         .catch(error => alert(error.message))
+    },
+
+    vw = (percentage) => {
+        const viewportWidth = Dimensions.get('window').width;
+        const decimal = percentage * .01;
+        percentage = parseInt(percentage, 10);
+
+        // Hard limits
+        if (percentage < 0) {
+            percentage = 100;
+        }
+        if (percentage > 1000) {
+            percentage = 1000;
+        }
+
+        return Math.round(viewportWidth * decimal);
+    },
+
+    vh = (percentage) => {
+        const viewportHeight = Dimensions.get('window').height;
+        const decimal = percentage * .01;
+        percentage = parseInt(percentage, 10);
+    
+        // Hard limits
+        if (percentage < 0) {
+          percentage = 100;
+        }
+        if (percentage > 1000) {
+          percentage = 1000;
+        }
+    
+        return Math.round(viewportHeight * decimal);
     }
 
     return (
@@ -36,10 +69,16 @@ const LoginScreen = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <View style={styles.container}>
-                <Image style={styles.image} source={require("../assets/log2.png")} />
+                <Image style={{
+                    marginBottom: 40,
+                    height: vw(60),
+                    width: vw(60),
+                    borderColor: "black",
+                    borderWidth: 1,
+                }} source={require("../assets/log2.png")} />
             
                 <StatusBar style="auto" />
-                <View style={styles.inputView}>
+                <View style={[styles.inputView, {width: vw(70)}]}>
                     <TextInput
                     style={styles.TextInput}
                     placeholder="Email."
@@ -48,10 +87,10 @@ const LoginScreen = () => {
                     />
                 </View>
             
-                <View style={styles.inputView}>
+                <View style={[styles.inputView, {width: vw(70)}]}>
                     <TextInput
                     style={styles.TextInput}
-                    placeholder="Password."
+                    placeholder="Mot de passe"
                     placeholderTextColor="#003f5c"
                     secureTextEntry={true}
                     onChangeText={(password) => setPassword(password)}
@@ -59,11 +98,19 @@ const LoginScreen = () => {
                 </View>
             
                 <TouchableOpacity>
-                    <Text style={styles.forgot_button}>Forgot Password?</Text>
+                    <Text style={styles.forgot_button}>Mot de passe oublié ?</Text>
                 </TouchableOpacity>
             
-                <TouchableOpacity style={styles.loginBtn}>
-                    <Text style={styles.loginText}>LOGIN</Text>
+                <TouchableOpacity
+                    onPress={handleLogin}
+                    style={[styles.loginBtn, {width: vw(60)}]}
+                >
+                    <Text style={{color: "#fff"}}>Se connecter</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Register")}   
+                >
+                    <Text style={[styles.forgot_button, {marginTop: 9}]}>Pas de compte ? S'inscrire</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -77,17 +124,10 @@ const LoginScreen = () => {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-        },
-        image: {
-            marginBottom: 40,
-            height: 80,
-            width: 80,
-        },
-         
+        },         
         inputView: {
-            backgroundColor: "#FFC0CB",
+            backgroundColor: "#F9E4B7",
             borderRadius: 30,
-            width: "70%",
             height: 45,
             marginBottom: 20,
             alignItems: "center",
@@ -96,7 +136,7 @@ const LoginScreen = () => {
         TextInput: {
             height: 50,
             flex: 1,
-            padding: 10,
+            padding: 5,
             marginLeft: 20,
         },
         
@@ -106,12 +146,11 @@ const LoginScreen = () => {
         },
         
         loginBtn: {
-            width: "80%",
             borderRadius: 25,
             height: 50,
             alignItems: "center",
             justifyContent: "center",
             marginTop: 40,
-            backgroundColor: "#FF1493",
+            backgroundColor: "#5E6072",
         },
 })
