@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { auth } from '../firebase'
+import { auth } from '../../firebase'
 import { useNavigation } from '@react-navigation/core'
 
-
+let conn = false;
 const LoginScreen = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -14,7 +14,8 @@ const LoginScreen = () => {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
           if (user) {
-            navigation.replace("Home")
+            navigation.replace("Home");
+            conn = true;
           }
         })
     
@@ -75,7 +76,7 @@ const LoginScreen = () => {
                     width: vw(60),
                     borderColor: "black",
                     borderWidth: 1,
-                }} source={require("../assets/log2.png")} />
+                }} source={require("../../assets/log2.png")} />
             
                 <StatusBar style="auto" />
                 <View style={[styles.inputView, {width: vw(70)}]}>
@@ -118,6 +119,7 @@ const LoginScreen = () => {
     }
 
     export default LoginScreen
+    export { conn }
 
     const styles = StyleSheet.create({
         container: {
